@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Half Marathon Training Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fdf6f9;
+    --surface: #ffffff;
+    --surface2: #f7eef4;
+    --border: rgba(200,160,200,0.18);
+    --border2: rgba(180,130,190,0.32);
+    --text: #2d1f2e;
+    --muted: #9b7fa8;
+    --accent: #f9c6e0;
+    --accent2: #d47bb8;
+    --accent3: #b9a0e8;
+    --easy-bg: #fef3fb; --easy: #c0559a;
+    --tempo-bg: #fffbeb; --tempo: #b8860b;
+    --interval-bg: #fff0f5; --interval: #c0436a;
+    --hill-bg: #f0f0ff; --hill: #6655cc;
+    --long-bg: #eef6ff; --long: #3a7bc8;
+    --race-bg: #fff0f8; --race: #bf2d7e;
+    --rest-bg: #f5f0f8; --rest: #9b7fa8;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* HERO */
+  .hero {
+    padding: 80px 24px 60px;
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 300px;
+    background: radial-gradient(ellipse at center, rgba(212,123,184,0.13) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--accent2);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(42px, 7vw, 72px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+    color: var(--text);
+  }
+  h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .hero-sub {
+    font-size: 17px;
+    color: var(--muted);
+    max-width: 480px;
+    line-height: 1.7;
+    margin-bottom: 40px;
+  }
+
+  /* STATS BAR */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 60px;
+  }
+  .stat-item {
+    background: var(--surface);
+    padding: 20px 24px;
+    transition: background 0.2s;
+  }
+  .stat-item:hover { background: var(--surface2); }
+  .stat-label { font-size: 11px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; font-family: 'DM Mono', monospace; margin-bottom: 6px; }
+  .stat-value { font-size: 22px; font-weight: 500; color: var(--accent); }
+  .stat-note { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* PACE REFERENCE */
+  .section { max-width: 900px; margin: 0 auto; padding: 0 24px 60px; }
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+  .section-sub { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+
+  .pace-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+    margin-bottom: 48px;
+  }
+  .pace-card {
+    border-radius: 10px;
+    padding: 16px;
+    border: 1px solid var(--border);
+  }
+  .pace-tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 100px;
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+  .pace-pace { font-size: 15px; font-weight: 500; margin-bottom: 3px; }
+  .pace-desc { font-size: 12px; color: var(--muted); }
+
+  /* PHASE SELECTOR */
+  .phase-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .phase-tab {
+    padding: 8px 18px;
+    border-radius: 100px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    transition: all 0.2s;
+  }
+  .phase-tab:hover { border-color: var(--accent2); color: var(--text); }
+  .phase-tab.active {
+    background: var(--accent2);
+    border-color: var(--accent2);
+    color: #fff;
+    font-weight: 500;
+  }
+
+  .phase-banner {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent2);
+    border-radius: 0 10px 10px 0;
+    padding: 16px 20px;
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+
+  /* CYCLE NAV */
+  .cycle-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .nav-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border2);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .nav-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+  .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .cycle-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .cycle-label strong { color: var(--text); }
+  .progress-wrap { flex: 1; }
+  .progress-track {
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #d47bb8, #9b6dd4);
+    border-radius: 100px;
+    transition: width 0.4s ease;
+  }
+
+  /* WEEK GRID */
+  .week-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 48px;
+  }
+  .week-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    transition: border-color 0.2s;
+  }
+  .week-card:hover { border-color: var(--border2); }
+  .week-card.recovery { border-color: rgba(212,123,184,0.25); background: #fffafd; }
+  .week-card.race-week { border-color: rgba(191,45,126,0.25); background: #fff5fb; }
+  .week-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .week-badge {
+    font-size: 9px;
+    padding: 2px 7px;
+    border-radius: 100px;
+    background: rgba(212,123,184,0.12);
+    color: var(--accent2);
+    letter-spacing: 0.05em;
+  }
+  .week-badge.race { background: rgba(191,45,126,0.1); color: var(--race); }
+
+  .run-item {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    align-items: flex-start;
+  }
+  .run-item:last-child { margin-bottom: 0; }
+  .run-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 100px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .run-body { flex: 1; }
+  .run-day { font-size: 11px; color: var(--muted); margin-bottom: 1px; font-family: 'DM Mono', monospace; }
+  .run-name { font-size: 13px; font-weight: 500; color: var(--text); }
+  .run-detail { font-size: 11px; color: var(--muted); margin-top: 1px; line-height: 1.4; }
+
+  /* TYPE STYLES */
+  .t-easy .run-pill { background: var(--easy-bg); color: var(--easy); }
+  .t-tempo .run-pill { background: var(--tempo-bg); color: var(--tempo); }
+  .t-interval .run-pill { background: var(--interval-bg); color: var(--interval); }
+  .t-hill .run-pill { background: var(--hill-bg); color: var(--hill); }
+  .t-long .run-pill { background: var(--long-bg); color: var(--long); }
+  .t-race .run-pill { background: var(--race-bg); color: var(--race); }
+  .t-rest .run-pill { background: var(--rest-bg); color: var(--rest); }
+
+  /* LEGEND */
+  .legend { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 48px; }
+  .legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--muted); }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* TIPS */
+  .tips-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 60px; }
+  .tip-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .tip-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 36px;
+    color: #e0c8f0;
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+  .tip-title { font-size: 14px; font-weight: 500; margin-bottom: 6px; }
+  .tip-body { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 24px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    font-family: 'DM Mono', monospace;
+  }
+  footer a { color: var(--accent2); text-decoration: none; }
+
+  /* DIVIDER */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 0 24px 48px; max-width: 900px; margin-left: auto; margin-right: auto; }
+
+  .tips-grid .tip-card:nth-child(1) { border-top: 3px solid #f4b8dc; }
+  .tips-grid .tip-card:nth-child(2) { border-top: 3px solid #f7d87a; }
+  .tips-grid .tip-card:nth-child(3) { border-top: 3px solid #c5b8f5; }
+  .tips-grid .tip-card:nth-child(4) { border-top: 3px solid #a8d8f7; }
+  .tips-grid .tip-card:nth-child(5) { border-top: 3px solid #f4b8dc; }
+  .tips-grid .tip-card:nth-child(6) { border-top: 3px solid #f7d87a; }
+
+  @media (max-width: 600px) {
+    .week-grid { grid-template-columns: 1fr; }
+    .phase-tabs { gap: 6px; }
+    h1 { font-size: 38px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="eyebrow">12-month plan · 13 cycles · half marathon</div>
+  <h1>Run your first<br><em>13.1 miles.</em></h1>
+  <p class="hero-sub">A structured plan built from your 5K time of 29:37. Three phases, four-week cycles, progressive overload — and a race at the end.</p>
+
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-label">Your 5K</div>
+      <div class="stat-value" style="color:#d47bb8">29:37</div>
+      <div class="stat-note">9:33 / mile</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Goal finish</div>
+      <div class="stat-value" style="color:#b09be0">~2:18</div>
+      <div class="stat-note">2:15 – 2:20 range</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Duration</div>
+      <div class="stat-value" style="color:#3a7bc8">52 wks</div>
+      <div class="stat-note">13 × 4-week cycles</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Runs / week</div>
+      <div class="stat-value" style="color:#d47bb8">3 – 4</div>
+      <div class="stat-note">long run on Sunday</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Peak long run</div>
+      <div class="stat-value" style="color:#b09be0">13 mi</div>
+      <div class="stat-note">cycle 9, week 3</div>
+    </div>
+  </div>
+</div>
+
+<!-- PACE REFERENCE -->
+<section class="section">
+  <h2 class="section-title">Your training paces</h2>
+  <p class="section-sub">Based on your 5K. These will naturally improve as you train — reassess every 2 cycles.</p>
+  <div class="pace-grid">
+    <div class="pace-card" style="background:var(--easy-bg); border-color:rgba(192,85,154,0.18)">
+      <span class="pace-tag" style="background:rgba(192,85,154,0.12);color:var(--easy)">easy</span>
+      <div class="pace-pace" style="color:var(--easy)">10:15 – 10:45 /mi</div>
+      <div class="pace-desc">Conversational. Could sing a song.</div>
+    </div>
+    <div class="pace-card" style="background:var(--tempo-bg); border-color:rgba(184,134,11,0.18)">
+      <span class="pace-tag" style="background:rgba(184,134,11,0.1);color:var(--tempo)">tempo</span>
+      <div class="pace-pace" style="color:var(--tempo)">8:20 – 8:45 /mi</div>
+      <div class="pace-desc">Comfortably hard. Choppy sentences.</div>
+    </div>
+    <div class="pace-card" style="background:var(--interval-bg); border-color:rgba(192,67,106,0.18)">
+      <span class="pace-tag" style="background:rgba(192,67,106,0.1);color:var(--interval)">interval</span>
+      <div class="pace-pace" style="color:var(--interval)">7:55 – 8:15 /mi</div>
+      <div class="pace-desc">Hard. Can't talk. Focused.</div>
+    </div>
+    <div class="pace-card" style="background:var(--hill-bg); border-color:rgba(102,85,204,0.18)">
+      <span class="pace-tag" style="background:rgba(102,85,204,0.1);color:var(--hill)">hills</span>
+      <div class="pace-pace" style="color:var(--hill)">90 – 95% effort</div>
+      <div class="pace-desc">Hard uphill, easy jog down.</div>
+    </div>
+    <div class="pace-card" style="background:var(--long-bg); border-color:rgba(58,123,200,0.18)">
+      <span class="pace-tag" style="background:rgba(58,123,200,0.1);color:var(--long)">long run</span>
+      <div class="pace-pace" style="color:var(--long)">10:15 – 11:00 /mi</div>
+      <div class="pace-desc">Slow. Time on feet is the goal.</div>
+    </div>
+    <div class="pace-card" style="background:var(--race-bg); border-color:rgba(191,45,126,0.22)">
+      <span class="pace-tag" style="background:rgba(191,45,126,0.1);color:var(--race)">race pace</span>
+      <div class="pace-pace" style="color:var(--race)">~8:00 /mi</div>
+      <div class="pace-desc">Goal: 2:15 – 2:20 finish.</div>
+    </div>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#f7b8dc"></div> easy</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f7d87a"></div> tempo</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f4a0bc"></div> interval</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#c5b8f5"></div> hill</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#a8cff7"></div> long run</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f0a0d0"></div> race</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#d8c8e8"></div> rest / cross</div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- TRAINING PLAN -->
+<section class="section">
+  <h2 class="section-title">Training plan</h2>
+  <p class="section-sub">Navigate by phase and cycle. Each 4-week cycle: 3 build weeks + 1 recovery week.</p>
+
+  <div class="phase-tabs" id="phaseTabs">
+    <button class="phase-tab active" onclick="setPhase(0)">Phase 1 · Base (cycles 1–4)</button>
+    <button class="phase-tab" onclick="setPhase(1)">Phase 2 · Build (cycles 5–9)</button>
+    <button class="phase-tab" onclick="setPhase(2)">Phase 3 · Peak &amp; Race (cycles 10–13)</button>
+  </div>
+
+  <div class="phase-banner" id="phaseBanner"></div>
+
+  <div class="cycle-nav">
+    <button class="nav-btn" id="prevBtn" onclick="prevCycle()">←</button>
+    <button class="nav-btn" id="nextBtn" onclick="nextCycle()">→</button>
+    <div class="cycle-label" id="cycleLabel"></div>
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+  </div>
+
+  <div class="week-grid" id="weekGrid"></div>
+</section>
+
+<hr class="divider">
+
+<!-- TIPS -->
+<section class="section">
+  <h2 class="section-title">Key principles</h2>
+  <p class="section-sub">The things that will make or break your training.</p>
+  <div class="tips-grid">
+    <div class="tip-card">
+      <div class="tip-num">01</div>
+      <div class="tip-title">Easy really means easy</div>
+      <div class="tip-body">Your easy runs should feel embarrassingly slow. If you can't hold a full conversation, you're going too fast. Most runners blow this and pay for it later.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-num">02</div>
+      <div class="tip-title">The recovery week is sacred</div>
+      <div class="tip-body">Week 4 of every cycle cuts mileage by ~30%. This isn't optional — it's when fitness is actually cemented. Don't skip it or "make up" lost miles.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-num">03</div>
+      <div class="tip-title">Long runs are slow runs</div>
+      <div class="tip-body">60–90 seconds per mile slower than tempo. The goal is time on feet and aerobic adaptation, not pace. Take walk breaks if you need them — no shame.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-num">04</div>
+      <div class="tip-title">Practice race-day nutrition</div>
+      <div class="tip-body">Start carrying water from cycle 5. Introduce energy gels on long runs in phase 2. Never try new food or gear on race day.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-num">05</div>
+      <div class="tip-title">Trust the taper</div>
+      <div class="tip-body">The final 2 weeks of reduced mileage will feel wrong. Your legs will feel heavy, you'll feel out of shape. You're not. You're peaking. Trust it.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-num">06</div>
+      <div class="tip-title">Reassess every 2 cycles</div>
+      <div class="tip-body">Run a timed 5K every 8 weeks to recalibrate your paces. As your fitness grows, your easy pace will naturally get faster — and that's the goal.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  built with ♥ for race day &nbsp;·&nbsp; <a href="https://github.com" target="_blank">github</a>
+</footer>
+
+<script>
+const phases = [
+  {
+    desc: "Pure aerobic base. Every run is easy or easy-long. No hard efforts yet — build the engine before you push it. Long runs grow from 4 to 9 miles. 3 runs/week.",
+    cycles: [
+      { label: "Cycle 1", month: "Month 1", weeks: [
+        { name: "Week 1", weeks: [
+          { type:"easy", day:"Tue", name:"3 mi easy", detail:"~10:30/mi, fully conversational" },
+          { type:"easy", day:"Thu", name:"3 mi easy", detail:"same easy effort" },
+          { type:"long", day:"Sun", name:"4 mi long", detail:"slow and steady, ~10:45/mi" },
+        ]},
+        { name: "Week 2", days: [
+          { type:"easy", day:"Tue", name:"3 mi easy", detail:"conversational" },
+          { type:"easy", day:"Thu", name:"3.5 mi easy", detail:"add a half mile" },
+          { type:"long", day:"Sun", name:"5 mi long", detail:"stay slow, notice your breathing" },
+        ]},
+        { name: "Week 3", days: [
+          { type:"easy", day:"Tue", name:"4 mi easy", detail:"conversational" },
+          { type:"easy", day:"Thu", name:"3.5 mi easy", detail:"midweek easy" },
+          { type:"long", day:"Sun", name:"6 mi long", detail:"first run over an hour" },
+        ]},
+        { name: "Week 4", recovery: true, days: [
+          { type:"easy", day:"Tue", name:"3 mi easy", detail:"step-back week" },
+          { type:"rest", day:"Thu", name:"Rest or walk", detail:"active recovery" },
+          { type:"long", day:"Sun", name:"4 mi easy", detail:"reduced long run" },
+        ]},
+      ]},
+      { label: "Cycle 2", month: "Month 2", weeks: [
+        { name: "Week 1", days: [
+          { type:"easy", day:"Tue", name:"3.5 mi easy", detail:"" },
+          { type:"easy", day:"Thu", name:"3.5 mi easy", detail:"" },
+          { type:"long", day:"Sun", name:"5 mi long", detail:"~10:30–11:00/mi" },
+        ]},
+        { name: "Week 2", days: [
+          { type:"easy", day:"Tue", name:"4 mi easy", detail:"" },
+          { type:"easy", day:"Thu", name:"4 mi easy", detail:"" },
+          { type:"long", day:"Sun", name:"6 mi long", detail:"walk break if needed" },
+        ]},
+        { name: "Week 3", days: [
+          { type:"easy", day:"Tue", name:"4 mi easy", detail:"" },
+          { type:"easy", day:"Thu", name:"4 mi easy", detail:"" },
+          { type:"long", day:"Sun", name:"7 mi long", detail:"biggest run of phase 1" },
+        ]},
+        { name: "Week 4", recovery: true, days: [
+          { type:"easy", day:"Tue", name:"3 mi easy", detail:"step-back week" },
+          { type:"rest", day:"Thu", name:"Rest or cross-train", detail:"bike, swim, yoga" },
+          { type:"long", day:"Sun", name:"5 mi easy", detail:"" },
+        ]},
+      ]},
+      { label: "Cycle 3", month: "Month 3", weeks: [
+        { name: "Week 1", days: [
+          { type:"easy", day:"Tue", name:"4 mi easy", detail:"" },
+          { type:"easy", day:"Thu", name:"4 mi easy", detail:"" },
+          { type:"long", day:"Sun", name:"6 mi long", detail:"" },
+        ]},
+        { name: "Week 2", days: [
+          { type:"easy", day:"Tue", name:"4 mi easy", detail:"" },
+          { type:"easy", day:"Thu", name:"4.5 mi easy", detail:"" },
+          { type:"long", day:"Sun", name:"7 mi long", detail:"practice carrying water" },
+        ]},
+        { name: "Week 3", days: [
+          { type:"easy", day:"Tue", name:"5 mi easy", detail:"" },
+          { type:"easy", day:"Thu", name:"4 mi easy", detail:"" },
+          { type:"long", day:"Sun", name:"8 mi long", detail:"longest run yet!" },
+        ]},
+        { name: "Week 4", recovery: true, days: [
+          { type:"easy", day:"Tue", name:"3 mi easy", detail:"" },
+          { type:"rest", day:"Thu", name:"Rest", detail:"" },
+          { type:"long", day:"Sun", name:"5 mi easy", detail:"" },
+        ]},
+      ]},
+      { label: "Cycle 4", month: "Month 4", weeks: [
+        { name: "Week 1", days: [
+          { type:"easy", day:"Tue", name:"4 mi easy", detail:"" },
+          { type:"easy", day:"Thu", name:"5 mi easy", detail:"" },
+          { type:"long", day:"Sun", name:"7 mi long", detail:"" },
+        ]},
+        { name: "Week 2", days: [
+          { type:"easy", day:"Tue", name:"5 mi easy", detail:"" },
+          { type:"easy", day:"Thu", name:"5 mi easy", detail:"" },
+          { type:"long", day:"Sun", name:"8 mi long", detail:"practice water every 2 miles" },
+        ]},
+        { name: "Week 3", days: [
+          { type:"easy", day:"Tue", name:"5 mi easy", detail:"" },
+          { type:"easy", day:"Thu", name:"5 mi easy", detail:"" },
+          { type:"long", day:"Sun", name:"9 mi long", detail:"first time over 8 miles!" },
+        ]},
+        { name: "Week 4", recovery: true, days: [
+          { type:"easy", day:"Tue", name:"4 mi easy", detail:"" },
+          { type:"rest", day:"Thu", name:"Rest", detail:"" },
+          { type:"long", day:"Sun", name:"6 mi easy", detail:"" },
+        ]},
+      ]},
+    ]
+  },
+  {
+    desc: "Introduce quality work: tempo, hills, and intervals. One hard session per week. Long runs grow to 13 miles. 3–4 runs/week. Easy days stay truly easy.",
+    cycles: [
+      { label: "Cycle 5", month: "Month 5", weeks: [
+        { name: "Week 1", days: [
+          { type:"easy", day:"Tue", name:"5 mi easy", detail:"" },
+          { type:"hill", day:"Thu", name:"Hill repeats", detail:"6 × 60-sec uphills, jog down recovery" },
+          { type:"long", day:"Sun", name:"8 mi long", detail:"easy, ~10:15/mi" },
+        ]},
+        { name: "Week 2", days: [
+          { type:"easy", day:"Tue", name:"5 mi easy", detail:"" },
+          { type:"tempo", day:"Thu", name:"4 mi with 2 mi tempo", detail:"1 mi warmup · 2 mi @8:45/mi · 1 mi cooldown" },
+          { type:"long", day:"Sun", name:"9 mi long", detail:"" },
+        ]},
+        { name: "Week 3", days: [
+          { type:"easy", day:"Tue", name:"5 mi easy", detail:"" },
+          { type:"interval", day:"Thu", name:"Intervals", detail:"4 × 800m @8:15/mi · 90 sec rest" },
+          { type:"long", day:"Sun", name:"10 mi long", detail:"first double-digit run!" },
+        ]},
+        { name: "Week 4", recovery: true, days: [
+          { type:"easy", day:"Tue", name:"4 mi easy", detail:"step-back week" },
+          { type:"easy", day:"Thu", name:"4 mi easy", detail:"no hard effort" },
+          { type:"long", day:"Sun", name:"7 mi easy", detail:"" },
+        ]},
+      ]},
+      { label: "Cycle 6", month: "Month 6", weeks: [
+        { name: "Week 1", days: [
+          { type:"easy", day:"Tue", name:"5 mi easy", detail:"" },
+          { type:"hill", day:"Thu", name:"Hill repeats", detail:"8 × 60-sec uphills" },
+          { type:"long", day:"Sun", name:"9 mi long", detail:"" },
+        ]},
+        { name: "Week 2", days: [
+          { type:"easy", day:"Tue", name:"5 mi easy", detail:"" },
+          { type:"tempo", day:"Thu", name:"5 mi with 3 mi tempo", detail:"1 mi WU · 3 mi @8:40/mi · 1 mi CD" },
+          { type:"long", day:"Sun", name:"10 mi long", detail:"" },
+        ]},
+        { name: "Week 3", days: [
+          { type:"easy", day:"Tue", name:"5 mi easy", detail:"" },
+          { type:"interval", day:"Thu", name:"Intervals", detail:"5 × 800m @8:15/mi · 90 sec rest" },
+          { type:"long", day:"Sun", name:"11 mi long", detail:"2 hrs on feet, take a gel" },
+        ]},
+        { name: "Week 4", recovery: true, days: [
+          { type:"easy", day:"Tue", name:"4 mi easy", detail:"" },
+          { type:"rest", day:"Thu", name:"Rest", detail:"" },
+          { type:"long", day:"Sun", name:"7 mi easy", detail:"" },
+        ]},
+      ]},
+      { label: "Cycle 7", month: "Month 7", weeks: [
+        { name: "Week 1", days: [
+          { type:"easy", day:"Tue", name:"5 mi easy", detail:"" },
+          { type:"easy", day:"Wed", name:"4 mi easy", detail:"optional 4th day" },
+          { type:"tempo", day:"Thu", name:"5 mi with 3 mi tempo", detail:"@8:40/mi" },
+          { type:"long", day:"Sun", name:"10 mi long", detail:"" },
+        ]},
+        { name: "Week 2", days: [
+          { type:"easy", day:"Tue", name:"5 mi easy", detail:"" },
+          { type:"easy", day:"Wed", name:"4 mi easy", detail:"" },
+          { type:"hill", day:"Thu", name:"Hill repeats", detail:"8 × 90-sec uphills" },
+          { type:"long", day:"Sun", name:"11 mi long", detail:"" },
+        ]},
+        { name: "Week 3", days: [
+          { type:"easy", day:"Tue", name:"6 mi easy", detail:"" },
+          { type:"easy", day:"Wed", name:"4 mi easy", detail:"" },
+          { type:"interval", day:"Thu", name:"Intervals", detail:"6 × 800m @8:10/mi · 90 sec rest" },
+          { type:"long", day:"Sun", name:"12 mi long", detail:"carry fuel, practice pacing" },
+        ]},
+        { name: "Week 4", recovery: true, days: [
+          { type:"easy", day:"Tue", name:"4 mi easy", detail:"" },
+          { type:"rest", day:"Thu", name:"Rest", detail:"" },
+          { type:"long", day:"Sun", name:"8 mi easy", detail:"" },
+        ]},
+      ]},
+      { label: "Cycle 8", month: "Month 8", weeks: [
+        { name: "Week 1", days: [
+          { type:"easy", day:"Tue", name:"6 mi easy", detail:"" },
+          { type:"tempo", day:"Thu", name:"6 mi with 4 mi tempo", detail:"@8:35/mi" },
+          { type:"long", day:"Sun", name:"10 mi long", detail:"" },
+        ]},
+        { name: "Week 2", days: [
+          { type:"easy", day:"Tue", name:"6 mi easy", detail:"" },
+          { type:"interval", day:"Thu", name:"Intervals", detail:"4 × 1 mi @8:00/mi · 2 min rest" },
+          { type:"long", day:"Sun", name:"11 mi long", detail:"" },
+        ]},
+        { name: "Week 3", days: [
+          { type:"easy", day:"Tue", name:"6 mi easy", detail:"" },
+          { type:"hill", day:"Thu", name:"Hill workout", detail:"10 × 60-sec uphills + strides" },
+          { type:"long", day:"Sun", name:"12 mi long", detail:"" },
+        ]},
+        { name: "Week 4", recovery: true, days: [
+          { type:"easy", day:"Tue", name:"5 mi easy", detail:"" },
+          { type:"rest", day:"Thu", name:"Rest", detail:"" },
+          { type:"long", day:"Sun", name:"8 mi easy", detail:"" },
+        ]},
+      ]},
+      { label: "Cycle 9", month: "Month 9", weeks: [
+        { name: "Week 1", days: [
+          { type:"easy", day:"Tue", name:"6 mi easy", detail:"" },
+          { type:"tempo", day:"Thu", name:"7 mi with 4 mi tempo", detail:"@8:30/mi" },
+          { type:"long", day:"Sun", name:"11 mi long", detail:"" },
+        ]},
+        { name: "Week 2", days: [
+          { type:"easy", day:"Tue", name:"6 mi easy", detail:"" },
+          { type:"interval", day:"Thu", name:"Intervals", detail:"5 × 1 mi @8:00/mi · 90 sec rest" },
+          { type:"long", day:"Sun", name:"12 mi long", detail:"" },
+        ]},
+        { name: "Week 3", days: [
+          { type:"easy", day:"Tue", name:"7 mi easy", detail:"" },
+          { type:"tempo", day:"Thu", name:"7 mi with 5 mi tempo", detail:"@8:25/mi — race effort preview" },
+          { type:"long", day:"Sun", name:"13 mi long", detail:"your first half marathon distance!" },
+        ]},
+        { name: "Week 4", recovery: true, days: [
+          { type:"easy", day:"Tue", name:"5 mi easy", detail:"" },
+          { type:"rest", day:"Thu", name:"Rest", detail:"" },
+          { type:"long", day:"Sun", name:"8 mi easy", detail:"" },
+        ]},
+      ]},
+    ]
+  },
+  {
+    desc: "Tune up for race day. Long runs peak then taper. Introduce race-pace work. Final cycle = 2 weeks taper + race week. Trust the training and arrive rested.",
+    cycles: [
+      { label: "Cycle 10", month: "Month 10", weeks: [
+        { name: "Week 1", days: [
+          { type:"easy", day:"Tue", name:"6 mi easy", detail:"" },
+          { type:"tempo", day:"Thu", name:"8 mi with 5 mi tempo", detail:"@8:20/mi" },
+          { type:"long", day:"Sun", name:"12 mi long", detail:"" },
+        ]},
+        { name: "Week 2", days: [
+          { type:"easy", day:"Tue", name:"6 mi easy", detail:"" },
+          { type:"interval", day:"Thu", name:"Intervals", detail:"6 × 1 mi @7:55/mi · 90 sec rest" },
+          { type:"long", day:"Sun", name:"13 mi long", detail:"practice race-day nutrition" },
+        ]},
+        { name: "Week 3", days: [
+          { type:"easy", day:"Tue", name:"6 mi easy", detail:"" },
+          { type:"tempo", day:"Thu", name:"6 mi with 4 mi tempo", detail:"@8:15/mi" },
+          { type:"long", day:"Sun", name:"11 mi long", detail:"controlled, don't overdo it" },
+        ]},
+        { name: "Week 4", recovery: true, days: [
+          { type:"easy", day:"Tue", name:"5 mi easy", detail:"" },
+          { type:"rest", day:"Thu", name:"Rest", detail:"" },
+          { type:"long", day:"Sun", name:"8 mi easy", detail:"" },
+        ]},
+      ]},
+      { label: "Cycle 11", month: "Month 11", weeks: [
+        { name: "Week 1", days: [
+          { type:"easy", day:"Tue", name:"6 mi easy", detail:"" },
+          { type:"tempo", day:"Thu", name:"8 mi with 5 mi tempo", detail:"@8:15/mi" },
+          { type:"long", day:"Sun", name:"12 mi long", detail:"" },
+        ]},
+        { name: "Week 2", days: [
+          { type:"easy", day:"Tue", name:"7 mi easy", detail:"" },
+          { type:"interval", day:"Thu", name:"Race-pace work", detail:"3 × 2 mi @8:00/mi · 2 min rest" },
+          { type:"long", day:"Sun", name:"13 mi long", detail:"run last 3 mi at race pace" },
+        ]},
+        { name: "Week 3", days: [
+          { type:"easy", day:"Tue", name:"6 mi easy", detail:"" },
+          { type:"tempo", day:"Thu", name:"7 mi with 4 mi tempo", detail:"@8:10/mi" },
+          { type:"long", day:"Sun", name:"10 mi long", detail:"controlled — taper begins" },
+        ]},
+        { name: "Week 4", recovery: true, days: [
+          { type:"easy", day:"Tue", name:"5 mi easy", detail:"" },
+          { type:"rest", day:"Thu", name:"Rest", detail:"" },
+          { type:"long", day:"Sun", name:"7 mi easy", detail:"" },
+        ]},
+      ]},
+      { label: "Cycle 12", month: "Month 12", weeks: [
+        { name: "Week 1", days: [
+          { type:"easy", day:"Tue", name:"6 mi easy", detail:"" },
+          { type:"tempo", day:"Thu", name:"7 mi with 4 mi tempo", detail:"@8:10/mi" },
+          { type:"long", day:"Sun", name:"11 mi long", detail:"" },
+        ]},
+        { name: "Week 2", days: [
+          { type:"easy", day:"Tue", name:"6 mi easy", detail:"" },
+          { type:"interval", day:"Thu", name:"Sharpener", detail:"4 × 1 mi @7:55/mi — feeling fast" },
+          { type:"long", day:"Sun", name:"12 mi long", detail:"confident and controlled" },
+        ]},
+        { name: "Week 3", days: [
+          { type:"easy", day:"Tue", name:"5 mi easy", detail:"" },
+          { type:"tempo", day:"Thu", name:"5 mi with 3 mi tempo", detail:"@8:05/mi" },
+          { type:"long", day:"Sun", name:"8 mi easy", detail:"2-week taper begins" },
+        ]},
+        { name: "Week 4", recovery: true, days: [
+          { type:"easy", day:"Tue", name:"4 mi easy", detail:"" },
+          { type:"rest", day:"Thu", name:"Rest", detail:"" },
+          { type:"long", day:"Sun", name:"6 mi easy", detail:"" },
+        ]},
+      ]},
+      { label: "Cycle 13", month: "Race Month", weeks: [
+        { name: "Taper week 1", days: [
+          { type:"easy", day:"Tue", name:"5 mi easy", detail:"taper — trust the work" },
+          { type:"tempo", day:"Thu", name:"4 mi with 2 mi tempo", detail:"shake out the legs" },
+          { type:"long", day:"Sun", name:"8 mi easy", detail:"final long effort" },
+        ]},
+        { name: "Taper week 2", days: [
+          { type:"easy", day:"Tue", name:"4 mi easy", detail:"feel light and fresh" },
+          { type:"easy", day:"Thu", name:"3 mi easy", detail:"short and breezy" },
+          { type:"long", day:"Sun", name:"5 mi easy", detail:"last run before race week" },
+        ]},
+        { name: "Race week", days: [
+          { type:"easy", day:"Tue", name:"3 mi easy", detail:"race week — stay loose" },
+          { type:"easy", day:"Thu", name:"2 mi + strides", detail:"4 × 20-sec strides at race pace" },
+          { type:"rest", day:"Sat", name:"Rest", detail:"lay out gear, sleep early" },
+        ]},
+        { name: "Race day!", raceWeek: true, days: [
+          { type:"race", day:"Sun", name:"Half marathon!", detail:"Goal: 2:15–2:20 · Go get it" },
+        ]},
+      ]},
+    ]
+  }
+];
+
+let currentPhase = 0;
+let currentCycleIdx = 0;
+
+const phaseDescEl = document.getElementById('phaseBanner');
+const weekGridEl = document.getElementById('weekGrid');
+const progressEl = document.getElementById('progressFill');
+const cycleLabelEl = document.getElementById('cycleLabel');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+
+function totalCycles() {
+  return phases.reduce((a,p)=>a+p.cycles.length, 0);
+}
+
+function globalCycleIndex() {
+  let idx = 0;
+  for (let i = 0; i < currentPhase; i++) idx += phases[i].cycles.length;
+  return idx + currentCycleIdx;
+}
+
+function setPhase(p) {
+  currentPhase = p;
+  currentCycleIdx = 0;
+  document.querySelectorAll('.phase-tab').forEach((t,i)=>t.classList.toggle('active',i===p));
+  render();
+}
+
+function prevCycle() {
+  if (currentCycleIdx > 0) { currentCycleIdx--; }
+  else if (currentPhase > 0) {
+    currentPhase--;
+    currentCycleIdx = phases[currentPhase].cycles.length - 1;
+    document.querySelectorAll('.phase-tab').forEach((t,i)=>t.classList.toggle('active',i===currentPhase));
+  }
+  render();
+}
+
+function nextCycle() {
+  if (currentCycleIdx < phases[currentPhase].cycles.length - 1) { currentCycleIdx++; }
+  else if (currentPhase < phases.length - 1) {
+    currentPhase++;
+    currentCycleIdx = 0;
+    document.querySelectorAll('.phase-tab').forEach((t,i)=>t.classList.toggle('active',i===currentPhase));
+  }
+  render();
+}
+
+function render() {
+  const ph = phases[currentPhase];
+  const cycle = ph.cycles[currentCycleIdx];
+  const gi = globalCycleIndex();
+  const total = totalCycles();
+
+  phaseDescEl.textContent = ph.desc;
+  cycleLabelEl.innerHTML = `<strong>${cycle.label}</strong> &nbsp;·&nbsp; ${cycle.month} &nbsp;·&nbsp; cycle ${gi+1} of ${total}`;
+  progressEl.style.width = Math.round(((gi+1)/total)*100) + '%';
+  prevBtn.disabled = (gi === 0);
+  nextBtn.disabled = (gi === total-1);
+
+  weekGridEl.innerHTML = cycle.weeks.map(w => {
+    const days = w.days || [];
+    const isRecovery = !!w.recovery;
+    const isRace = !!w.raceWeek;
+    return `<div class="week-card ${isRecovery?'recovery':''} ${isRace?'race-week':''}">
+      <div class="week-name">${w.name}${isRecovery?'<span class="week-badge">recovery</span>':''}${isRace?'<span class="week-badge race">race day</span>':''}</div>
+      ${days.map(d=>`
+        <div class="run-item t-${d.type}">
+          <span class="run-pill">${d.type}</span>
+          <div class="run-body">
+            <div class="run-day">${d.day}</div>
+            <div class="run-name">${d.name}</div>
+            ${d.detail?`<div class="run-detail">${d.detail}</div>`:''}
+          </div>
+        </div>
+      `).join('')}
+    </div>`;
+  }).join('');
+}
+
+render();
+</script>
+</body>
+</html>
