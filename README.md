@@ -7,8 +7,8 @@ A self-contained training tracker for a 13-cycle (52-week) half marathon plan. J
 Open `half-marathon-plan.html` in a browser, or host it with GitHub Pages.
 
 - Browse phases and cycles with the tabs and arrow buttons.
-- Check off a run once you've done it, then log your actual distance and time.
-- The log is saved automatically in the browser via `localStorage`.
+- Check off a run once you've done it, then log your actual distance, plus time as separate minutes/seconds boxes (no colon needed — works fine on a phone keypad). Your pace per mile is calculated automatically.
+- Your log is saved automatically in the browser via `localStorage`.
 
 ## Notes
 
