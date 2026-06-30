@@ -26,6 +26,8 @@
     --long-bg: #eef6ff; --long: #3a7bc8;
     --race-bg: #fff0f8; --race: #bf2d7e;
     --rest-bg: #f5f0f8; --rest: #9b7fa8;
+    --done: #4caf7d;
+    --done-bg: #eef9f3;
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
@@ -171,9 +173,18 @@
     padding: 16px 20px;
     font-size: 14px;
     color: var(--muted);
-    margin-bottom: 28px;
+    margin-bottom: 16px;
     line-height: 1.6;
   }
+
+  /* LOG PROGRESS LINE */
+  .log-progress {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  .log-progress strong { color: var(--done); }
 
   /* CYCLE NAV */
   .cycle-nav {
@@ -257,10 +268,30 @@
   .run-item {
     display: flex;
     gap: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     align-items: flex-start;
+    padding: 6px;
+    margin-left: -6px;
+    margin-right: -6px;
+    border-radius: 8px;
+    transition: background 0.2s;
   }
   .run-item:last-child { margin-bottom: 0; }
+  .run-item.is-done { background: var(--done-bg); }
+
+  .run-check {
+    flex-shrink: 0;
+    padding-top: 3px;
+    display: flex;
+    align-items: center;
+  }
+  .run-check input[type="checkbox"] {
+    width: 19px;
+    height: 19px;
+    accent-color: var(--done);
+    cursor: pointer;
+  }
+
   .run-pill {
     font-family: 'DM Mono', monospace;
     font-size: 9px;
@@ -272,10 +303,45 @@
     flex-shrink: 0;
     margin-top: 1px;
   }
-  .run-body { flex: 1; }
+  .run-body { flex: 1; min-width: 0; }
   .run-day { font-size: 11px; color: var(--muted); margin-bottom: 1px; font-family: 'DM Mono', monospace; }
   .run-name { font-size: 13px; font-weight: 500; color: var(--text); }
+  .run-item.is-done .run-name { color: var(--done); }
   .run-detail { font-size: 11px; color: var(--muted); margin-top: 1px; line-height: 1.4; }
+
+  /* ACTUAL LOG INPUTS */
+  .run-log {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+  .run-log.show { display: flex; }
+  .log-field {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .log-field span {
+    font-size: 10px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+  .log-input {
+    width: 56px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    padding: 5px 7px;
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    background: #fff;
+    color: var(--text);
+  }
+  .log-input:focus {
+    outline: none;
+    border-color: var(--done);
+  }
 
   /* TYPE STYLES */
   .t-easy .run-pill { background: var(--easy-bg); color: var(--easy); }
@@ -291,24 +357,6 @@
   .legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--muted); }
   .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
-  /* TIPS */
-  .tips-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 60px; }
-  .tip-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-  }
-  .tip-num {
-    font-family: 'DM Serif Display', serif;
-    font-size: 36px;
-    color: #e0c8f0;
-    line-height: 1;
-    margin-bottom: 10px;
-  }
-  .tip-title { font-size: 14px; font-weight: 500; margin-bottom: 6px; }
-  .tip-body { font-size: 13px; color: var(--muted); line-height: 1.6; }
-
   /* FOOTER */
   footer {
     border-top: 1px solid var(--border);
@@ -318,22 +366,26 @@
     font-size: 13px;
     font-family: 'DM Mono', monospace;
   }
-  footer a { color: var(--accent2); text-decoration: none; }
+  footer a, footer button.link-btn {
+    color: var(--accent2);
+    text-decoration: none;
+    background: none;
+    border: none;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 0;
+  }
 
   /* DIVIDER */
   .divider { border: none; border-top: 1px solid var(--border); margin: 0 24px 48px; max-width: 900px; margin-left: auto; margin-right: auto; }
-
-  .tips-grid .tip-card:nth-child(1) { border-top: 3px solid #f4b8dc; }
-  .tips-grid .tip-card:nth-child(2) { border-top: 3px solid #f7d87a; }
-  .tips-grid .tip-card:nth-child(3) { border-top: 3px solid #c5b8f5; }
-  .tips-grid .tip-card:nth-child(4) { border-top: 3px solid #a8d8f7; }
-  .tips-grid .tip-card:nth-child(5) { border-top: 3px solid #f4b8dc; }
-  .tips-grid .tip-card:nth-child(6) { border-top: 3px solid #f7d87a; }
 
   @media (max-width: 600px) {
     .week-grid { grid-template-columns: 1fr; }
     .phase-tabs { gap: 6px; }
     h1 { font-size: 38px; }
+    .log-input { width: 50px; font-size: 13px; padding: 6px 7px; }
+    .run-check input[type="checkbox"] { width: 21px; height: 21px; }
   }
 </style>
 </head>
@@ -370,6 +422,11 @@
       <div class="stat-label">Peak long run</div>
       <div class="stat-value" style="color:#b09be0">13 mi</div>
       <div class="stat-note">cycle 9, week 3</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Logged</div>
+      <div class="stat-value" id="loggedStat" style="color:var(--done)">0/0</div>
+      <div class="stat-note">runs completed</div>
     </div>
   </div>
 </div>
@@ -428,7 +485,7 @@
 <!-- TRAINING PLAN -->
 <section class="section">
   <h2 class="section-title">Training plan</h2>
-  <p class="section-sub">Navigate by phase and cycle. Each 4-week cycle: 3 build weeks + 1 recovery week.</p>
+  <p class="section-sub">Navigate by phase and cycle. Check off a run to log what you actually did. Each 4-week cycle: 3 build weeks + 1 recovery week.</p>
 
   <div class="phase-tabs" id="phaseTabs">
     <button class="phase-tab active" onclick="setPhase(0)">Phase 1 · Base (cycles 1–4)</button>
@@ -437,6 +494,7 @@
   </div>
 
   <div class="phase-banner" id="phaseBanner"></div>
+  <div class="log-progress" id="cycleLogProgress"></div>
 
   <div class="cycle-nav">
     <button class="nav-btn" id="prevBtn" onclick="prevCycle()">←</button>
@@ -450,48 +508,9 @@
   <div class="week-grid" id="weekGrid"></div>
 </section>
 
-<hr class="divider">
-
-<!-- TIPS -->
-<section class="section">
-  <h2 class="section-title">Key principles</h2>
-  <p class="section-sub">The things that will make or break your training.</p>
-  <div class="tips-grid">
-    <div class="tip-card">
-      <div class="tip-num">01</div>
-      <div class="tip-title">Easy really means easy</div>
-      <div class="tip-body">Your easy runs should feel embarrassingly slow. If you can't hold a full conversation, you're going too fast. Most runners blow this and pay for it later.</div>
-    </div>
-    <div class="tip-card">
-      <div class="tip-num">02</div>
-      <div class="tip-title">The recovery week is sacred</div>
-      <div class="tip-body">Week 4 of every cycle cuts mileage by ~30%. This isn't optional — it's when fitness is actually cemented. Don't skip it or "make up" lost miles.</div>
-    </div>
-    <div class="tip-card">
-      <div class="tip-num">03</div>
-      <div class="tip-title">Long runs are slow runs</div>
-      <div class="tip-body">60–90 seconds per mile slower than tempo. The goal is time on feet and aerobic adaptation, not pace. Take walk breaks if you need them — no shame.</div>
-    </div>
-    <div class="tip-card">
-      <div class="tip-num">04</div>
-      <div class="tip-title">Practice race-day nutrition</div>
-      <div class="tip-body">Start carrying water from cycle 5. Introduce energy gels on long runs in phase 2. Never try new food or gear on race day.</div>
-    </div>
-    <div class="tip-card">
-      <div class="tip-num">05</div>
-      <div class="tip-title">Trust the taper</div>
-      <div class="tip-body">The final 2 weeks of reduced mileage will feel wrong. Your legs will feel heavy, you'll feel out of shape. You're not. You're peaking. Trust it.</div>
-    </div>
-    <div class="tip-card">
-      <div class="tip-num">06</div>
-      <div class="tip-title">Reassess every 2 cycles</div>
-      <div class="tip-body">Run a timed 5K every 8 weeks to recalibrate your paces. As your fitness grows, your easy pace will naturally get faster — and that's the goal.</div>
-    </div>
-  </div>
-</section>
-
 <footer>
   built with ♥ for race day &nbsp;·&nbsp; <a href="https://github.com" target="_blank">github</a>
+  &nbsp;·&nbsp; <button class="link-btn" onclick="resetTracking()">reset tracking data</button>
 </footer>
 
 <script>
@@ -500,7 +519,7 @@ const phases = [
     desc: "Pure aerobic base. Every run is easy or easy-long. No hard efforts yet — build the engine before you push it. Long runs grow from 4 to 9 miles. 3 runs/week.",
     cycles: [
       { label: "Cycle 1", month: "Month 1", weeks: [
-        { name: "Week 1", weeks: [
+        { name: "Week 1", days: [
           { type:"easy", day:"Tue", name:"3 mi easy", detail:"~10:30/mi, fully conversational" },
           { type:"easy", day:"Thu", name:"3 mi easy", detail:"same easy effort" },
           { type:"long", day:"Sun", name:"4 mi long", detail:"slow and steady, ~10:45/mi" },
@@ -803,15 +822,82 @@ const phases = [
 let currentPhase = 0;
 let currentCycleIdx = 0;
 
-const phaseDescEl = document.getElementById('phaseBanner');
-const weekGridEl = document.getElementById('weekGrid');
-const progressEl = document.getElementById('progressFill');
-const cycleLabelEl = document.getElementById('cycleLabel');
-const prevBtn = document.getElementById('prevBtn');
-const nextBtn = document.getElementById('nextBtn');
+// ---- Tracking (persisted to localStorage) ----
+const STORAGE_KEY = 'hm_training_log_v1';
+let tracking = {};
+try {
+  tracking = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+} catch (e) {
+  tracking = {};
+}
 
+function saveTracking() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tracking));
+  } catch (e) {
+    console.warn('Could not save tracking data', e);
+  }
+}
+
+function runId(phaseIdx, cycleIdx, weekIdx, dayIdx) {
+  return `${phaseIdx}-${cycleIdx}-${weekIdx}-${dayIdx}`;
+}
+
+function toggleDone(id) {
+  const entry = tracking[id] || {};
+  entry.done = !entry.done;
+  tracking[id] = entry;
+  saveTracking();
+  render();
+}
+
+function updateLog(id, field, value) {
+  const entry = tracking[id] || {};
+  entry[field] = value;
+  tracking[id] = entry;
+  saveTracking();
+}
+
+function totalRunsCount() {
+  let total = 0;
+  phases.forEach(ph => ph.cycles.forEach(c => c.weeks.forEach(w => {
+    total += (w.days || []).length;
+  })));
+  return total;
+}
+
+function completedCount() {
+  return Object.values(tracking).filter(t => t.done).length;
+}
+
+function cycleCompletedCount(phaseIdx, cycleIdx) {
+  const cycle = phases[phaseIdx].cycles[cycleIdx];
+  let done = 0, total = 0;
+  cycle.weeks.forEach((w, wIdx) => {
+    (w.days || []).forEach((d, dIdx) => {
+      total++;
+      const entry = tracking[runId(phaseIdx, cycleIdx, wIdx, dIdx)];
+      if (entry && entry.done) done++;
+    });
+  });
+  return { done, total };
+}
+
+function updateLoggedStat() {
+  document.getElementById('loggedStat').textContent = `${completedCount()}/${totalRunsCount()}`;
+}
+
+function resetTracking() {
+  if (confirm('Clear all logged runs? This cannot be undone.')) {
+    tracking = {};
+    saveTracking();
+    render();
+  }
+}
+
+// ---- Navigation ----
 function totalCycles() {
-  return phases.reduce((a,p)=>a+p.cycles.length, 0);
+  return phases.reduce((a, p) => a + p.cycles.length, 0);
 }
 
 function globalCycleIndex() {
@@ -823,7 +909,7 @@ function globalCycleIndex() {
 function setPhase(p) {
   currentPhase = p;
   currentCycleIdx = 0;
-  document.querySelectorAll('.phase-tab').forEach((t,i)=>t.classList.toggle('active',i===p));
+  document.querySelectorAll('.phase-tab').forEach((t, i) => t.classList.toggle('active', i === p));
   render();
 }
 
@@ -832,7 +918,7 @@ function prevCycle() {
   else if (currentPhase > 0) {
     currentPhase--;
     currentCycleIdx = phases[currentPhase].cycles.length - 1;
-    document.querySelectorAll('.phase-tab').forEach((t,i)=>t.classList.toggle('active',i===currentPhase));
+    document.querySelectorAll('.phase-tab').forEach((t, i) => t.classList.toggle('active', i === currentPhase));
   }
   render();
 }
@@ -842,10 +928,18 @@ function nextCycle() {
   else if (currentPhase < phases.length - 1) {
     currentPhase++;
     currentCycleIdx = 0;
-    document.querySelectorAll('.phase-tab').forEach((t,i)=>t.classList.toggle('active',i===currentPhase));
+    document.querySelectorAll('.phase-tab').forEach((t, i) => t.classList.toggle('active', i === currentPhase));
   }
   render();
 }
+
+const phaseDescEl = document.getElementById('phaseBanner');
+const weekGridEl = document.getElementById('weekGrid');
+const progressEl = document.getElementById('progressFill');
+const cycleLabelEl = document.getElementById('cycleLabel');
+const cycleLogProgressEl = document.getElementById('cycleLogProgress');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
 
 function render() {
   const ph = phases[currentPhase];
@@ -859,24 +953,48 @@ function render() {
   prevBtn.disabled = (gi === 0);
   nextBtn.disabled = (gi === total-1);
 
-  weekGridEl.innerHTML = cycle.weeks.map(w => {
+  const { done, total: cycleTotal } = cycleCompletedCount(currentPhase, currentCycleIdx);
+  cycleLogProgressEl.innerHTML = `<strong>${done}/${cycleTotal}</strong> runs logged this cycle`;
+
+  weekGridEl.innerHTML = cycle.weeks.map((w, wIdx) => {
     const days = w.days || [];
     const isRecovery = !!w.recovery;
     const isRace = !!w.raceWeek;
     return `<div class="week-card ${isRecovery?'recovery':''} ${isRace?'race-week':''}">
       <div class="week-name">${w.name}${isRecovery?'<span class="week-badge">recovery</span>':''}${isRace?'<span class="week-badge race">race day</span>':''}</div>
-      ${days.map(d=>`
-        <div class="run-item t-${d.type}">
+      ${days.map((d, dIdx) => {
+        const id = runId(currentPhase, currentCycleIdx, wIdx, dIdx);
+        const entry = tracking[id] || {};
+        const isDone = !!entry.done;
+        const dist = entry.actualDistance || '';
+        const time = entry.actualTime || '';
+        return `
+        <div class="run-item t-${d.type} ${isDone?'is-done':''}">
+          <label class="run-check">
+            <input type="checkbox" ${isDone?'checked':''} onchange="toggleDone('${id}')" aria-label="Mark ${d.name} as done">
+          </label>
           <span class="run-pill">${d.type}</span>
           <div class="run-body">
             <div class="run-day">${d.day}</div>
             <div class="run-name">${d.name}</div>
-            ${d.detail?`<div class="run-detail">${d.detail}</div>`:''}
+            ${d.detail?`<div class="run-detail">planned: ${d.detail}</div>`:''}
+            <div class="run-log ${isDone?'show':''}">
+              <div class="log-field">
+                <input type="text" inputmode="decimal" class="log-input" placeholder="0.0" value="${dist}" onchange="updateLog('${id}','actualDistance',this.value)">
+                <span>mi</span>
+              </div>
+              <div class="log-field">
+                <input type="text" inputmode="numeric" class="log-input" placeholder="mm:ss" value="${time}" onchange="updateLog('${id}','actualTime',this.value)">
+                <span>time</span>
+              </div>
+            </div>
           </div>
-        </div>
-      `).join('')}
+        </div>`;
+      }).join('')}
     </div>`;
   }).join('');
+
+  updateLoggedStat();
 }
 
 render();
