@@ -342,6 +342,22 @@
     outline: none;
     border-color: var(--done);
   }
+  .log-input.time-part {
+    width: 38px;
+    text-align: center;
+  }
+  .time-colon {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .pace-calc {
+    width: 100%;
+    font-size: 11px;
+    color: var(--done);
+    font-family: 'DM Mono', monospace;
+    margin-top: 2px;
+  }
 
   /* TYPE STYLES */
   .t-easy .run-pill { background: var(--easy-bg); color: var(--easy); }
@@ -856,6 +872,21 @@ function updateLog(id, field, value) {
   entry[field] = value;
   tracking[id] = entry;
   saveTracking();
+  render();
+}
+
+// Computes pace (min/mi) from distance + minutes/seconds, returns formatted string or null
+function calcPace(distance, min, sec) {
+  const dist = parseFloat(distance);
+  const m = parseFloat(min) || 0;
+  const s = parseFloat(sec) || 0;
+  if (!dist || dist <= 0 || (m === 0 && s === 0)) return null;
+  const totalMinutes = m + (s / 60);
+  const paceMinutes = totalMinutes / dist;
+  const paceMin = Math.floor(paceMinutes);
+  const paceSec = Math.round((paceMinutes - paceMin) * 60);
+  const paceSecStr = paceSec < 10 ? `0${paceSec}` : `${paceSec}`;
+  return `${paceMin}:${paceSecStr} /mi`;
 }
 
 function totalRunsCount() {
@@ -967,7 +998,9 @@ function render() {
         const entry = tracking[id] || {};
         const isDone = !!entry.done;
         const dist = entry.actualDistance || '';
-        const time = entry.actualTime || '';
+        const min = entry.actualMin || '';
+        const sec = entry.actualSec || '';
+        const pace = calcPace(dist, min, sec);
         return `
         <div class="run-item t-${d.type} ${isDone?'is-done':''}">
           <label class="run-check">
@@ -984,9 +1017,12 @@ function render() {
                 <span>mi</span>
               </div>
               <div class="log-field">
-                <input type="text" inputmode="numeric" class="log-input" placeholder="mm:ss" value="${time}" onchange="updateLog('${id}','actualTime',this.value)">
+                <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" class="log-input time-part" placeholder="mm" value="${min}" onchange="updateLog('${id}','actualMin',this.value)">
+                <span class="time-colon">:</span>
+                <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" class="log-input time-part" placeholder="ss" value="${sec}" onchange="updateLog('${id}','actualSec',this.value)">
                 <span>time</span>
               </div>
+              ${pace ? `<div class="pace-calc">≈ ${pace}</div>` : ''}
             </div>
           </div>
         </div>`;
